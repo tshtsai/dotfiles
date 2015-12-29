@@ -1,0 +1,303 @@
+
+
+在local端架設NFS讓Cbox掛載
+    1.Install package
+	$ sudo apt-get install nfs-common nfs-kernel-server
+    2.Setup NFS server path
+	$ sudo vim /etc/exports
+	----------------------------------------------------------------------------------------
+        APPEND
+	/home/tshtsai/arec/nfs_cbox *(rw,nohide,insecure,no_subtree_check,async,no_root_squash)
+	----------------------------------------------------------------------------------------
+    3.Start NFS server
+	$ sudo /etc/init.d/nfs-kernel-server start
+    4.Ckeck NFS status
+	$ sudo showmount -e localhost
+    5.Usage
+	From Cbox terminal:
+	# mount -t nfs -o nolock 10.2.50.123://home/tshtsai/arec/nfs_cbox /root
+    6.Check mount status
+	$ df
+
+
+不使用隨身碟在Cbox上更新Firmware
+    1.掛載Firmware檔案的路徑並更新，接著重開機即可
+	1.1跳板更新
+	# mount -t nfs -o nolock 10.2.50.123://home/tshtsai/arec/nfs_cbox /root
+	# fw_setenv fwpass 1
+	# fw_update /root/${firmware_file}
+	# reboot
+    1.2一般更新
+	# mount -t nfs -o nolock 10.2.50.123://home/tshtsai/arec/nfs_cbox /root
+	# fw_update /root/${firmware_file}
+	# reboot
+    2.檢查板號是否更新成功
+	# cat /etc/os-release 
+	or 
+	使用遙控器的選單-->設定功能-->關於
+
+
+架設FTP Server(vstfp)
+    1.Install package
+	$ sudo apt-get install vsftpd
+    2.修改config的內容
+	$sudo vim /etc/vsftpd.conf
+	-------------------------------------------------
+	UNCOMMENT 
+        write_enable = YES
+	UNCOMMENT 
+        xferlog_file=/var/log/vsftpd.log
+        MODIFY
+        ftpd_banner=Welcome to Arec FTP service.
+	-------------------------------------------------
+    3.Restart vsftp service
+	$ sudo service vsftpd restart
+    4.Check status of vsftp
+	$ ps -aux | grep vsftpd
+    5.Add a user in your Linux
+        $ sudo adduser arec
+    6.根目錄不可以有寫入權限,否則會出現"500 OOPS: vsftpd: refusing to run with writable root inside chroot()"的error
+	$ chmod a-w /home/arec
+    7.在使用者根目錄下另外產生一個有存取權限的資料夾
+	$ sudo mkdir ${direcotry}
+        $ sudo chmod 777 ${directory}
+    8.Download FileZilla or Use browser to check the ftp connection
+
+
+vim修改readonly的file
+    $ :w !sudo tee %
+
+
+掛載Cbox的目錄到/home/tshtsai/arec/smb_cbox下
+    $ sudo mount -t cifs -o username="francis.tsai",domain=arec.com,sec=ntlm,rw,iocharset=utf8,file_mode=0777,dir_mode=0777 //file.arec.com/CBox /home/tshtsai/arec/smb_cbox/
+
+
+設定相對應的toolchain path到bashrc下，否則會出現"arm-arago-linux-gnueabi-g++: Command not found"的error
+    $ sudo vim ~/.bashrc
+    ------------------------------------------------------------------------------------------------
+    APPEND
+    export PATH=/home/tshtsai/arec/git/cbox_sdk4/ti_tools/cgt_a8/arago-2011.09/armv7a/bin/:$PATH
+    ------------------------------------------------------------------------------------------------  
+    更改完記得重新load bashrc檔
+    $ source ~/.bashrc
+
+
+vimdiff看不清楚
+    1.創立放置color theme的資料夾
+	$ mkdir -p ~/.vim/colors/
+    2.將grb256.vim放到~/.vim/colors的資料夾下
+    3.修改.vimrc
+	$ vim .vimrc
+        ----------------------------------------------------------
+	APPEND
+        if ! has("gui_running")
+	    set t_Co=256
+        endif
+	if &diff
+	    colors grb256 
+        endif
+	----------------------------------------------------------
+
+
+測試arec_ct的功能(level, volume)
+    1.需先殺掉watchdog並停止mw和UI
+	# killall watchdogd
+	# killall -2 mw & killall -9 arec & rm /tmp/arecui
+	or
+        將 S98startapp和S99gui前面將上_使它開機不運行,不過由於有空間滿無法改名的bug,必須先刪除一些檔案才能改名
+    2.手動啟用dhcp並掛載lo檔
+	# udhcpc
+        # mount -t nfs -o nolock 10.2.50.123://home/tshtsai/arec/nfs_cbox /root
+    3.將lo檔移至/usr/lib/gstreamer-1.0
+    4.測試lo功能
+	4.1.volume部份
+	    # gst-inspect-1.0 volume
+	    # gst-launch-1.0 audiotestsrc ! volume volume=0.5 ! arec_audiosink device=hw:0,0 arec_hw_control a-mode=0 vol-in=25 vol-out=25
+        4.2.level部份
+	  # gst-inspect-1.0 level
+          # gst-launch-1.0 -m audiotestsrc ! volume volume=0.5 ! level ! arec_audiosink device=hw:0,0 arec_hw_control a-mode=0 vol-in=25 vol-out=25
+
+    P.S 1.gst-inspect-1.0:觀察gst的狀況
+        2.gst-launch-1.0:啟用gst的功能
+
+
+GStreamer SDK(for Ubuntu 14.04 LTS)
+    1.Download and Install SDK
+	1.1.Create gstreamer-sdk.list and move it to /etc/apt/sources.list.d/
+	    $ sudo vim gstreamer-sdk.list
+	    ----------------------------------------------------------------------------------------------
+	    APPEND
+	    deb http://www.freedesktop.org/software/gstreamer-sdk/data/packages/ubuntu/raring/amd64 ./
+	    -----------------------------------------------------------------------------------------------
+	1.2.After adding the repositories, the GPG key of the apt repository has to be added and the apt repository list needs to be refreshed
+	    $ wget -q -O - http://www.freedesktop.org/software/gstreamer-sdk/sdk.gpg | sudo apt-key add -
+	    $ sudo apt-get update
+	1.3.Now that the new repositories are available, install the SDK
+	    $ sudo apt-get install gstreamer-sdk-dev	
+    2.Configure your development environment
+	The GStreamer SDK is installed in a non-standard location /opt/gstreamer-sdk. The shell script gst-sdk-shell sets the required environment variables for building applications with the GStreamer SDK      
+	$ /opt/gstreamer-sdk/bin/gst-sdk-shell
+    3.Getting the tutorial's source code
+	The source code is in /opt/gstreamer-sdk/share/gst-sdk/tutorials
+    4.Building the tutorials
+	$ gcc basic-tutorial-1.c -o basic-tutorial-1 `pkg-config --cflags --libs gstreamer-0.10`
+    5.Running the tutorials
+	$ ./basic-tutorial-1
+
+    Ref: 1.http://docs.gstreamer.com/display/GstSDK/Installing+on+Linux
+
+
+Usage of linux command find
+    $ find . -name '*.c'
+    //搜尋當前目錄及以下目錄的.c檔
+
+
+Makefile教學
+    Ref: 1.http://c4fun.cn/blog/2014/01/13/gnu-make-study01/
+         2.http://c4fun.cn/blog/2014/01/23/gnu-make-study02/
+
+
+Colored man page
+    Add following lines to ~/.bashrc
+    ------------------------------------------------------------------------------------------------
+    export LESS_TERMCAP_mb=$(printf '\e[01;31m') # enter blinking mode
+    export LESS_TERMCAP_md=$(printf '\e[01;38;5;75m') # enter double-bright mode
+    export LESS_TERMCAP_me=$(printf '\e[0m') # turn off all appearance modes (mb, md, so, us)
+    export LESS_TERMCAP_se=$(printf '\e[0m') # leave standout mode
+    export LESS_TERMCAP_so=$(printf '\e[01;33m') # enter standout mode
+    export LESS_TERMCAP_ue=$(printf '\e[0m') # leave underline mode
+    export LESS_TERMCAP_us=$(printf '\e[04;38;5;200m') # enter underline mode
+    ------------------------------------------------------------------------------------------------
+
+    Ref: 1.http://www.tuxarena.com/2012/04/tutorial-colored-man-pages-how-it-works/
+
+
+vim中搜尋並取代字串
+    先按Esc一下進入指令模式並輸入
+    :1,$s/123/456/g
+    此範例是搜尋文件中所有的123字串並以456取代,而1,$是從文件頭到文件尾的意思
+
+使用vimdiff來作git diff
+    利用以下commands來建立gitconfig
+    $git config --global diff.tool vimdiff
+    $git config --global difftool.prompt false
+    $git config --global alias.d difftool
+
+    之後使用git d ${filename}即可
+
+
+在tmux copy mode下search
+    Ctrl+s輸入要搜尋的字串，接著按Enter
+
+
+export的用法及shell中變數的關係(scope of shell variables)
+    subshell不會擁有原shell的變數，除非原shell export這個變數,
+    另外當subshell更改原shell export出來這個變數的值後,原shell此變數的值不會被改變,
+    但之後繼續創造的subshells此變數值就會是被改變後的值
+    example:
+    ----------------------------------------------------------
+    FOO=a      # set "local" environment variable
+    echo $FOO  # 'a'
+    bash       # forks a child process for the new shell
+    echo $FOO  # not set
+    exit       # return to original shell
+    echo $FOO  # still 'a'
+
+    export FOO # make FOO an environment variable
+    bash       # fork a new "child" shell
+    echo $FOO  # outputs 'a'
+    FOO=b      # modifies environment (not local) variable
+    bash       # fork "grandchild" shell
+    echo $FOO  # outputs 'b'
+    exit       # back to child shell
+    exit       # back to original shell
+    echo $FOO  # outputs 'a'
+    ---------------------------------------------------------
+
+    Ref: 1.http://unix.stackexchange.com/questions/27555/what-scopes-can-shell-variables-have
+
+
+vimdiff 快捷鍵
+    Keyboard Shortcuts:
+
+    do - Get changes from other window into the current window.
+
+    dp - Put the changes from current window into the other window.
+
+    ]c - Jump to the next change.
+
+    [c - Jump to the previous change.
+
+    Ctrl W + Ctrl W - Switch to the other split window.
+
+    :qa - Leave two diff windows immediately.
+
+    :wqa - Leave and save two diff windows immediately.
+
+    Ref: 1.http://amjith.blogspot.tw/2008/08/quick-and-dirty-vimdiff-tutorial.html
+
+
+git相關
+    1.取消上一次的commit(code仍不會改變)
+	$ git reset --soft HEAD~1
+    2.回到上一次commit的樣子(code內容會變回上一次commit的內容)
+	$ git reset --hard HEAD~1
+    3.回到某個commit時的code
+	$ git checkout ${某個commit的SHA}
+    4.回到master的code
+	$ git checkout master
+
+
+讓Tab出來的結果具有顏色屬性
+    $ echo set colored-stats on >> ~/.inputrc
+
+
+Aptitude
+    以往在ArchLinux下只需要使用pacman加上一些參數即可進行package的安裝及更新,然而在Ubuntu下的apt操作極為麻煩,有可能使用apt-get apt-cache等等,
+    如果能夠像pacman一樣一個指令配合一些參數就可使用就方便多了,而我找到了aptitude這個東西還不錯用,安裝的方法當然就是apt-get install...,不過應
+    該是最後一次用它了！！
+
+
+Jenkins on Ubuntu
+    1.安裝相關的JAVA SDK
+	$ sudo apt-get install openjdk-7-jre openjdk-7-jdk
+    2.下載jenkins的key並加到apt的repository中
+	$ wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+	$ sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
+    3.更新apt及install jenkins
+	$ sudo apt-get update
+	$ sudo apt-get install jenkins
+    4.執行jenkins
+	URL-http://localhost:8080
+    
+    Ref: 1.https://blog.wu-boy.com/2013/11/jenkins-nginx-auth/
+
+
+更改hostname
+    1.修改/etc/hostname的內容即可
+    2.不過這樣之後sudo都會噴 "unable to resolve host XXX"的error,所以要修改一下/ect/hosts讓新的hostname可以反解回127.0.0.1
+	$ sudo vim /etc/hosts
+	--------------------------------------------------
+	DELETE
+	127.0.0.1   ${old-hostname}
+	APPEND
+	127.0.0.1   ${new-hostname}
+	-------------------------------------------------
+
+
+讓使用者sudo不用password(for jenkins)
+    $ sudo visudo -f /etc/sudoers
+    ------------------------------------------------------
+    APPEND
+    jenkins ALL=NOPASSWD: ALL
+    -----------------------------------------------------
+
+
+網卡或網路掛掉
+    1.將eth0叫起
+	$ ifconfig eth0 up
+    2.分配dhcp給eth0
+	$ dhclient eth0
+
+
+
