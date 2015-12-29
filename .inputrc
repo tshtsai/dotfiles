@@ -1,0 +1,5 @@
+# Tab once to show all completions.
+set show-all-if-ambiguous on
+
+# Colored Tab list.
+set colored-stats on

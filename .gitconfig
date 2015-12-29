@@ -1,0 +1,14 @@
+[user]
+	email = francis.tsai@arec.com
+	name = francis.tsai 
+[diff]
+	tool = vimdiff
+	external = /usr/local/bin/git-diff.sh
+#vimdiff won't READONLY 
+[difftool "vimdiff"]
+        cmd = vim -f -d -c 'wincmd l' -c 'cd "$GIT_PREFIX"' "$LOCAL" "$REMOTE"
+[difftool]
+	prompt = false
+[alias]
+	d = difftool
+	gr = log --graph --full-history --all --color --pretty=tformat:"%x1b[31m%h%x09%x1b[32m%d%x1b[0m%x20%s%x20%x1b[33m(%an)%x1b[0m"
