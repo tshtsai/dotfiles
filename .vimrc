@@ -1,3 +1,48 @@
+" YouCompleMe vundle config.
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+" Install YouCompleteYou
+Plugin 'Valloric/YouCompleteMe'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+
+" YCM conf
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+let g:ycm_confirm_extra_conf = 0 
+
+
+" Delimitmate auto completion(only available in insert mode).(Some copy and paste bug needed to be fixed.)
+":inoremap ( ()<ESC>i
+":inoremap { {}<ESC>i
+":inoremap [ []<ESC>i
+":inoremap " ""<ESC>i
+":inoremap ' ''<ESC>i
+":inoremap < <><ESC>i
+
+
 colors desert "Using desert color theme
 set nu "顯示行號
 set autoindent "自動縮排
@@ -12,3 +57,6 @@ set statusline=%4*%<\%m%<[%F\%r%h%w]\ [%{&ff},%{&fileencoding},%Y]%=\[Position=%
 set softtabstop=4 "設定Tab長度為4個空白，則按兩下Tab即為一般的Tab(8個空白)
 set cursorline "underline
 set hlsearch "highlight all search results
+set foldmethod=syntax "enable folding
+
+

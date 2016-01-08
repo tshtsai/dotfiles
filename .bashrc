@@ -4,9 +4,10 @@ export LANG=en_US.UTF-8
 #bind '"\e[B": history-search-forward'
 shopt -s checkwinsize
 #shopt -s autocd
-#source /usr/share/git/completion/git-completion.bash
 
-export PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ "
+export GIT_PS1_SHOWDIRTYSTATE=1
+
+export PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[47;31m\]\$(__git_ps1)\[\033[m\]\$ "
 export CLICOLOR=1
 #export LSCOLORS=ExFxBxDxCxegedabagacad
 
@@ -38,3 +39,10 @@ export LESS_TERMCAP_se=$(printf '\e[0m') # leave standout mode
 export LESS_TERMCAP_so=$(printf '\e[01;33m') # enter standout mode
 export LESS_TERMCAP_ue=$(printf '\e[0m') # leave underline mode
 export LESS_TERMCAP_us=$(printf '\e[04;38;5;200m') # enter underline mode
+
+
+export PKG_CONFIG_PATH=/home/tshtsai/arec/git/cbox_sdk4/linux_devkit/usr/lib/pkgconfig
+
+# Load in the git branch prompt script.
+source ~/.git-prompt.sh
+

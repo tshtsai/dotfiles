@@ -3,7 +3,7 @@
 	name = francis.tsai 
 [diff]
 	tool = vimdiff
-	external = /usr/local/bin/git-diff.sh
+	external = /usr/local/bin/git-meld.sh
 #vimdiff won't READONLY 
 [difftool "vimdiff"]
         cmd = vim -f -d -c 'wincmd l' -c 'cd "$GIT_PREFIX"' "$LOCAL" "$REMOTE"
