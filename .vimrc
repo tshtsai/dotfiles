@@ -34,16 +34,17 @@ let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 let g:ycm_confirm_extra_conf = 0 
 
 
-" Delimitmate auto completion(only available in insert mode).(Some copy and paste bug needed to be fixed.)
-":inoremap ( ()<ESC>i
-":inoremap { {}<ESC>i
-":inoremap [ []<ESC>i
-":inoremap " ""<ESC>i
-":inoremap ' ''<ESC>i
-":inoremap < <><ESC>i
+" Delimitmate auto completion(only available in insert mode).
+:inoremap ( ()<ESC>i
+:inoremap { {}<ESC>i
+:inoremap [ []<ESC>i
+:inoremap " ""<ESC>i
+:inoremap ' ''<ESC>i
 
 
-colors desert "Using desert color theme
+"set t_Co=256 "Eanble 256color.
+colors distinguished "Using distinguished color theme.
+"colors desert
 set nu "顯示行號
 set autoindent "自動縮排
 set ruler "顯示最後一行狀態列
@@ -54,9 +55,31 @@ set incsearch "在關鍵字還沒完全輸入完畢前就顯示結果
 set enc=utf-8 "設定預設以utf-8開啟
 set laststatus=2 "最後有兩行狀態列 
 set statusline=%4*%<\%m%<[%F\%r%h%w]\ [%{&ff},%{&fileencoding},%Y]%=\[Position=%l,%v,%p%%]
-set softtabstop=4 "設定Tab長度為4個空白，則按兩下Tab即為一般的Tab(8個空白)
+set smarttab "根據文件中其他地方的縮排空格數來決定tab是多少個空格
+set tabstop=4 "表示一個tab顯示出來是幾個空格
+set softtabstop=4 "編輯的時候(backspace or Tab),一個tab是多少個空格
+set shiftwidth=4 "使用>>及<<時移動的行數
+set expandtab "將tab全部用空格取代
 set cursorline "underline
 set hlsearch "highlight all search results
 set foldmethod=syntax "enable folding
+set list listchars=tab:❘_,trail:· "將tab換成|_ 而空格換成·
+set ic "Enable case insensitive search"
+
+" If vimdiff, use desert color theme.
+if &diff  
+    colors desert  
+endif
+
+" Toggle auto-indenting for code paste.
+nnoremap <F2> :set invpaste paste?<CR>
+set pastetoggle=<F2>
+set showmode
+
+" Shortkey for comment and uncomment"
+vnoremap <C-i>   :norm i//<CR>
+vnoremap <C-x>   :norm xx<CR>
+vnoremap <C-o>   :norm i#<CR>
+vnoremap <C-z>   :norm x<CR>
 
 

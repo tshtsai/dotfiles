@@ -1,23 +1,24 @@
+# Local environment settings.
 export LANG=en_US.UTF-8
+export PATH=/usr/local/bin:$PATH
+export PATH=/usr/local/sbin:$PATH
 
-#bind '"\e[A": history-search-backward'
-#bind '"\e[B": history-search-forward'
-shopt -s checkwinsize
-#shopt -s autocd
+# Setting 256 colors explicitly in tmux.
+export TERM=screen-256color
 
 export GIT_PS1_SHOWDIRTYSTATE=1
 
+# Bash command prompt.
 export PS1="\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[47;31m\]\$(__git_ps1)\[\033[m\]\$ "
 export CLICOLOR=1
-#export LSCOLORS=ExFxBxDxCxegedabagacad
 
 # Prefered alias.
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias ll='ls -ahl'
-
-export PATH=/usr/local/bin:$PATH
-export PATH=/usr/local/sbin:$PATH
+alias brewer-sdk-HV-700='cd ~/arec/brewer_sdk/HV-700; source setup-sdk-env; cd -'
+alias brewer-sdk-LS-300='cd ~/arec/brewer_sdk/LS-300; source setup-sdk-env; cd -'
+alias brewer-sdk-KS-710='cd ~/arec/brewer_sdk/LS-300; source setup-sdk-env; cd -'
 
 # Toolchain path(arm-arago-linux-gnueabi-gcc and arm-arago-linux-gnueabi-g++).
 export PATH=/home/tshtsai/arec/git/cbox_sdk4/ti_tools/cgt_a8/arago-2011.09/armv7a/bin/:$PATH
@@ -42,7 +43,11 @@ export LESS_TERMCAP_us=$(printf '\e[04;38;5;200m') # enter underline mode
 
 
 export PKG_CONFIG_PATH=/home/tshtsai/arec/git/cbox_sdk4/linux_devkit/usr/lib/pkgconfig
+#export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
 
 # Load in the git branch prompt script.
 source ~/.git-prompt.sh
 
+#export GST_DEBUG_DUMP_DOT_DIR=~/git/gst-sdk-tutorials/gst-sdk/tutorials/graph
+
+export SSLKEYLOGFILE=~/tmp/twitch/sslkeylog.log
