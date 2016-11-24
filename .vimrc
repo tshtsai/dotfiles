@@ -39,7 +39,6 @@ let g:ycm_confirm_extra_conf = 0
 :inoremap { {}<ESC>i
 :inoremap [ []<ESC>i
 :inoremap " ""<ESC>i
-:inoremap ' ''<ESC>i
 
 
 "set t_Co=256 "Eanble 256color.
