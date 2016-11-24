@@ -81,4 +81,5 @@ vnoremap <C-x>   :norm xx<CR>
 vnoremap <C-o>   :norm i#<CR>
 vnoremap <C-z>   :norm x<CR>
 
-
+" Use F9 to turn on/off taglist"
+map <f9> :Tlist<CR> 
