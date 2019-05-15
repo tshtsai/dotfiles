@@ -20,9 +20,6 @@ alias brewer-sdk-HV-700='cd ~/arec/brewer_sdk/HV-700; source setup-sdk-env; cd -
 alias brewer-sdk-LS-300='cd ~/arec/brewer_sdk/LS-300; source setup-sdk-env; cd -'
 alias brewer-sdk-KS-710='cd ~/arec/brewer_sdk/LS-300; source setup-sdk-env; cd -'
 
-# Toolchain path(arm-arago-linux-gnueabi-gcc and arm-arago-linux-gnueabi-g++).
-export PATH=/home/tshtsai/arec/git/cbox_sdk4/ti_tools/cgt_a8/arago-2011.09/armv7a/bin/:$PATH
-
 # Enable bash completion.
 if ! shopt -oq posix; then
     if [ -f /usr/share/bash-completion/bash_completion ]; then
@@ -40,14 +37,3 @@ export LESS_TERMCAP_se=$(printf '\e[0m') # leave standout mode
 export LESS_TERMCAP_so=$(printf '\e[01;33m') # enter standout mode
 export LESS_TERMCAP_ue=$(printf '\e[0m') # leave underline mode
 export LESS_TERMCAP_us=$(printf '\e[04;38;5;200m') # enter underline mode
-
-
-export PKG_CONFIG_PATH=/home/tshtsai/arec/git/cbox_sdk4/linux_devkit/usr/lib/pkgconfig
-#export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig
-
-# Load in the git branch prompt script.
-source ~/.git-prompt.sh
-
-#export GST_DEBUG_DUMP_DOT_DIR=~/git/gst-sdk-tutorials/gst-sdk/tutorials/graph
-
-export SSLKEYLOGFILE=~/tmp/twitch/sslkeylog.log
